@@ -1,17 +1,24 @@
+import dashbord from "./pages/dashboard.js";
+import products from "./pages/products.js";
+import posts from "./pages/posts.js";
+import notFound from "./pages/notfound.js";
 
 function router(){
+
+    // what to show? 
+
     const routes =[
         {
             path: "/",
-            view: ()=> console.log('dashbord page')
+            view: dashbord,
         },
         {
             path: "/products",
-            view: ()=> console.log('products page')
+            view: products,
         },
         {
             path: "/posts",
-            view: ()=> console.log('posts page')
+            view: posts,
         }
     ];
 
@@ -19,7 +26,7 @@ function router(){
     const potentialRoutes = routes.map((item)=>{
         return {
             route: item,
-            isMatch : location.pathname === item.route
+            isMatch : location.pathname === item.path
         }
     })
 
@@ -28,30 +35,37 @@ function router(){
     if(!match){
         match = {
             route:{
-                path: '/not-found',view: ()=> console.log("not found"),
+                path: '/not-found',view: notFound,
             },
             isMatch:true,
         };
     }
-    console.log(match.route.view())
 
+    document.querySelector('#app').innerHTML = match.route.view()
+    console.log(match.route.view())
+    console.log(match)
 
 
 }
 
 function navigateTo(url){
+
+    // push user to new page
     history.pushState(null,null,url);
     router();
 }
 
+
+// fix click on browser back button
 window.addEventListener("popstate",router)
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",(e)=>{
     
     document.body.addEventListener('click',(e)=>{
         if(e.target.matches("[data-link]")){
-            e.preventDefault();
+            console.log(e.target.href);
             navigateTo(e.target.href);
+            e.preventDefault();
         }
     })
     router();
